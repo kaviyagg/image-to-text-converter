@@ -57,6 +57,7 @@ import coil.compose.rememberImagePainter
 import com.canhub.cropper.CropImageContract
 import com.example.textconverter.R
 import com.example.textconverter.picFormgallery.ImageCropperrse
+
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -161,10 +162,10 @@ fun TextRecognitionOnImages(bitmap: Bitmap, modifier: Modifier) {
 
 
 //                 Move ImageCropper inside this Box
-                ImageCropperrse(bitmap, showCroppedImage){ cropped ->
-                    croppedBitmap = cropped
-                }
-
+//                ImageCropperrse(bitmap, showCroppedImage){ cropped ->
+//                    croppedBitmap = cropped
+//                }
+                ImageCropperrse()
 
             }
 

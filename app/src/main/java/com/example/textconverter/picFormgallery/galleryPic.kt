@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -43,9 +41,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.unit.sp
-
-
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun PickImageFromGallery(navController: NavController) {
@@ -96,6 +92,7 @@ fun PickImageFromGallery(navController: NavController) {
             }
         }
 
+
         Spacer(modifier = Modifier.height(1.dp))
     }
 }
@@ -121,25 +118,23 @@ fun TextRecognitionOnImage(bitmap: Bitmap, modifier: Modifier) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
+//
             Box(
-                modifier = Modifier.size(400.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp) // Set the height of the image
+                    .background(Color.Red.copy(0.6f)) // Apply overlay to the Image
             ) {
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(400.dp)
-                            .background(Color.Transparent.copy(0.6f)) // Apply overlay to the Image
-                    )
-
-
-//                 Move ImageCropper inside this Box
-                    ImageCropperrse(bitmap, showCroppedImage){ cropped ->
-                        croppedBitmap = cropped
-                    }
-
-
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds, // Fill the bounds of the container
+                    modifier = Modifier.fillMaxSize() // Fill the available space
+                )
+                                ImageCropper(bitmap){ onCropAreaChanged ->
+                    croppedBitmap = onCropAreaChanged
+                }
+//                ImageCropper(bitmap)
             }
 
             Row(
@@ -177,27 +172,38 @@ fun TextRecognitionOnImage(bitmap: Bitmap, modifier: Modifier) {
                     .background(MaterialTheme.colorScheme.primary)
             )
 
-            LaunchedEffect(croppedBitmap) {
-                val image = croppedBitmap?.let { InputImage.fromBitmap(it, 0) }
-                if (image != null) {
-                    textRecognizer.process(image)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                extractedText = it.result?.text ?: ""
-                            }
-                        }
-                }
+//            LaunchedEffect(croppedBitmap) {
+//                val image = croppedBitmap?.let { InputImage.fromBitmap(it, 0) }
+//                if (image != null) {
+//                    textRecognizer.process(image)
+//                        .addOnCompleteListener {
+//                            if (it.isSuccessful) {
+//                                extractedText = it.result?.text ?: ""
+//                            }
+//                        }
+//                }
+//            }
+
+//            Text(
+//                text = extractedText,
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .verticalScroll(rememberScrollState())
+//                    .padding(20.dp),
+//                color = Color.Black,
+//                fontSize = 18.sp
+//            )
+
+
+            croppedBitmap?.let {
+                Image(
+                    bitmap =  it.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .background(Color.Transparent.copy(0.6f))
+                )
             }
 
-            Text(
-                text = extractedText,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(20.dp),
-                color = Color.Black,
-                fontSize = 18.sp
-            )
 
         }
     }
