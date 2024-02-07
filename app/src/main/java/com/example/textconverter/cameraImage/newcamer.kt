@@ -1,5 +1,6 @@
 package com.example.textconverter.cameraImage
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -48,15 +49,19 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.example.textconverter.picFormgallery.ImageCropper
 import com.example.textconverter.picFormgallery.ImageCropperrse
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun lense(navController: NavController){
+fun lens(navController: NavController){
     val context = LocalContext.current
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -127,7 +132,17 @@ fun lense(navController: NavController){
         Spacer(modifier = Modifier.height(1.dp))
     }
 
-
+fun Context.createImageFile(): File {
+    // Create an image file name
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    val image = File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir      /* directory */
+    )
+    return image
+}
 @Composable
 fun TextRecognitionOnImage(bitmap: MutableState<Bitmap?>, modifier: Modifier,cropLauncher: ActivityResultLauncher<CropImageContractOptions>) {
     val navController = rememberNavController()
@@ -148,9 +163,9 @@ fun TextRecognitionOnImage(bitmap: MutableState<Bitmap?>, modifier: Modifier,cro
         }
 
 //    bitmap.value?.let {
-//        ImageCropperrse(it, showCroppedImage) { cropped ->
-//            croppedBitmap = cropped
-//        }
+////        ImageCropperrse(it, showCroppedImage) { cropped ->
+////            croppedBitmap = cropped
+////        }
 //    }
 
     // Display the image with recognized text
@@ -165,17 +180,34 @@ fun TextRecognitionOnImage(bitmap: MutableState<Bitmap?>, modifier: Modifier,cro
                 .fillMaxSize()
         ) {
 
-            // Image at the top
-            bitmap.value?.asImageBitmap()?.let {
-                Image(
-                    bitmap = it,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(400.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
+//            // Image at the top
+//            bitmap.value?.asImageBitmap()?.let {
+//                Image(
+//                    bitmap = it,
+//                    contentDescription = null,
+//                    contentScale = ContentScale.FillBounds, // Fill the bounds of the container
+//                    modifier = Modifier.fillMaxSize() // Fill the available space
+//                )
+//            }
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp) // Set the height of the image
+                    .background(Color.Red.copy(0.6f)) // Apply overlay to the Image
+            ) {
+                bitmap.value?.asImageBitmap()?.let {
+                    Image(
+                        bitmap = it ,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds, // Fill the bounds of the container
+                        modifier = Modifier.fillMaxSize() // Fill the available space
+                    )
+                    ImageCropper(bitmap.value!!) { onCropAreaChanged ->
+                        croppedBitmap = onCropAreaChanged
+                    }
+                }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.textconverter.cameraImage.AppContent
 import com.example.textconverter.cameraImage.lens
 import com.example.textconverter.picFormgallery.PickImageFromGallery
 import com.example.textconverter.ui.theme.TextConverterTheme
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
                         PickImageFromGallery(navController = navController)
                     }
                     composable("camera") {
-                        lens(navController = navController)
+                        AppContent(navController = navController)
                     }
                 }
             }
